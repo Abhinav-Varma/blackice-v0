@@ -48,6 +48,24 @@ export default function Home() {
           </div>
 
           <div className="container px-4 md:px-6 relative z-10">
+            {/* Educational Purpose and Research Applications moved to top */}
+            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 mb-12 md:grid-cols-2">
+              <div className="rounded-lg border bg-background/60 backdrop-blur-sm p-6 shadow-sm">
+                <h3 className="text-xl font-bold">Educational Purpose</h3>
+                <p className="mt-2 text-muted-foreground">
+                  This tool is designed to help understand the concepts behind adversarial machine learning. It
+                  demonstrates how small, carefully crafted perturbations can affect model predictions.
+                </p>
+              </div>
+              <div className="rounded-lg border bg-background/60 backdrop-blur-sm p-6 shadow-sm">
+                <h3 className="text-xl font-bold">Research Applications</h3>
+                <p className="mt-2 text-muted-foreground">
+                  Understanding adversarial examples is crucial for developing more robust AI systems. This project
+                  helps visualize attack vectors and defense mechanisms used in research.
+                </p>
+              </div>
+            </div>
+
             <div className="mx-auto max-w-3xl space-y-4 text-center mb-10">
               <h2 className="text-3xl font-bold tracking-tighter md:text-4xl">What are Adversarial Attacks?</h2>
               <p className="text-muted-foreground md:text-xl">
@@ -74,7 +92,7 @@ export default function Home() {
                 </div>
                 <h3 className="text-xl font-bold">Classify File</h3>
                 <p className="text-center text-muted-foreground">
-                  Upload any file or generate inputs to analyze for adversarial perturbations
+                  Upload any file to analyze for adversarial perturbations
                 </p>
                 <Button className="mt-auto" asChild>
                   <Link href="/classify">Try Classification</Link>
@@ -107,27 +125,6 @@ export default function Home() {
             </div>
           </div>
         </section>
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
-          <div className="container px-4 md:px-6">
-            <div className="mx-auto grid max-w-5xl grid-cols-1 gap-6 py-12 md:grid-cols-2">
-              <div className="rounded-lg border bg-background p-6 shadow-sm">
-                <h3 className="text-xl font-bold">Educational Purpose</h3>
-                <p className="mt-2 text-muted-foreground">
-                  This tool is designed for educational purposes to help understand the concepts behind adversarial
-                  machine learning. It demonstrates how small, carefully crafted perturbations can affect model
-                  predictions.
-                </p>
-              </div>
-              <div className="rounded-lg border bg-background p-6 shadow-sm">
-                <h3 className="text-xl font-bold">Research Applications</h3>
-                <p className="mt-2 text-muted-foreground">
-                  Understanding adversarial examples is crucial for developing more robust AI systems. This demo helps
-                  visualize attack vectors and defense mechanisms used in research.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
       </main>
       <footer className="border-t bg-background/80 backdrop-blur-sm relative z-10">
         <div className="container flex flex-col gap-2 py-6 px-4 md:flex-row md:items-center md:px-6">
@@ -147,4 +144,3 @@ export default function Home() {
     </div>
   )
 }
-

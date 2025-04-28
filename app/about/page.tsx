@@ -23,7 +23,7 @@ export default function AboutPage() {
           <div>
             <h1 className="text-3xl font-bold tracking-tight">About BlackIce</h1>
             <p className="mt-2 text-muted-foreground">
-              Learn about the purpose and educational goals of this adversarial machine learning demonstration.
+              Learn about the purpose and educational goals of this adversarial machine learning project.
             </p>
           </div>
 
@@ -42,7 +42,7 @@ export default function AboutPage() {
             </p>
 
             <h2>Educational Goals</h2>
-            <p>This demonstration aims to:</p>
+            <p>This project aims to:</p>
             <ul>
               <li>Illustrate how adversarial examples are created</li>
               <li>Show the impact of adversarial perturbations on model predictions</li>
@@ -99,9 +99,9 @@ export default function AboutPage() {
           <div className="rounded-lg border p-6">
             <h2 className="mb-4 text-xl font-bold">Disclaimer</h2>
             <p className="text-muted-foreground">
-              This application is intended for educational and research purposes only. The demonstrations are simplified
-              versions of actual techniques used in adversarial machine learning research. In a real-world scenario,
-              both attacks and defenses would be more sophisticated.
+              This application is intended for educational and research purposes only. The techniques presented are used
+              in adversarial machine learning research. In a real-world scenario, both attacks and defenses would be
+              more sophisticated.
             </p>
           </div>
         </div>
@@ -109,4 +109,3 @@ export default function AboutPage() {
     </div>
   )
 }
-

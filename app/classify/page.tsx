@@ -8,10 +8,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { ArrowLeft, Upload, AlertCircle, FileText } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ArrowLeft, Upload, FileText } from "lucide-react"
 
 export default function ClassifyPage() {
   const [file, setFile] = useState<File | null>(null)
@@ -59,19 +56,6 @@ export default function ClassifyPage() {
     }, 1500)
   }
 
-  const generateInput = () => {
-    setLoading(true)
-
-    // Simulate generating an input
-    setTimeout(() => {
-      setFilePreview("/placeholder.svg?height=300&width=300&text=Generated+Input")
-      setFile(null)
-      setResult(null)
-      setConfidence(null)
-      setLoading(false)
-    }, 1000)
-  }
-
   const triggerFileInput = () => {
     if (fileInputRef.current) {
       fileInputRef.current.click()
@@ -96,194 +80,77 @@ export default function ClassifyPage() {
         <div className="space-y-6">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">Classify File</h1>
-            <p className="mt-2 text-muted-foreground">
-              Upload any file or generate inputs to analyze for adversarial perturbations.
-            </p>
+            <p className="mt-2 text-muted-foreground">Upload any file to analyze for adversarial perturbations.</p>
           </div>
 
-          <Alert>
-            <AlertCircle className="h-4 w-4" />
-            <AlertTitle>Educational Demo</AlertTitle>
-            <AlertDescription>
-              This is a simplified demonstration. In a real-world scenario, detection would use sophisticated algorithms
-              to analyze the file for adversarial patterns.
-            </AlertDescription>
-          </Alert>
-
-          <Tabs defaultValue="upload">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="upload">Upload File</TabsTrigger>
-              <TabsTrigger value="generate">Generate Input</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="upload" className="mt-4">
-              <Card className="backdrop-blur-sm bg-background/60 shadow-md">
-                <CardHeader>
-                  <CardTitle>File Classifier</CardTitle>
-                  <CardDescription>Upload a file to analyze it for potential adversarial modifications</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-center">
-                      <div
-                        className="relative flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50/50 hover:bg-gray-100/50"
-                        onClick={triggerFileInput}
-                      >
-                        {filePreview ? (
-                          <Image
-                            src={filePreview || "/placeholder.svg"}
-                            alt="Uploaded file preview"
-                            fill
-                            className="object-contain p-2"
-                          />
-                        ) : file ? (
-                          <div className="flex flex-col items-center justify-center">
-                            <FileText className="h-16 w-16 text-gray-400 mb-3" />
-                            <p className="text-sm font-medium">{file.name}</p>
-                            <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
-                          </div>
-                        ) : (
-                          <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                            <Upload className="h-10 w-10 text-gray-400 mb-3" />
-                            <p className="mb-2 text-sm text-gray-500">
-                              <span className="font-semibold">Click to upload</span> or drag and drop
-                            </p>
-                            <p className="text-xs text-gray-500">Any file type (MAX. 10MB)</p>
-                          </div>
-                        )}
-                        <Input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
+          <Card className="backdrop-blur-sm bg-background/60 shadow-md">
+            <CardHeader>
+              <CardTitle>File Classifier</CardTitle>
+              <CardDescription>Upload a file to analyze it for potential adversarial modifications</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex justify-center">
+                  <div
+                    className="relative flex h-64 w-full cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50/50 hover:bg-gray-100/50"
+                    onClick={triggerFileInput}
+                  >
+                    {filePreview ? (
+                      <Image
+                        src={filePreview || "/placeholder.svg"}
+                        alt="Uploaded file preview"
+                        fill
+                        className="object-contain p-2"
+                      />
+                    ) : file ? (
+                      <div className="flex flex-col items-center justify-center">
+                        <FileText className="h-16 w-16 text-gray-400 mb-3" />
+                        <p className="text-sm font-medium">{file.name}</p>
+                        <p className="text-xs text-gray-500">{(file.size / 1024).toFixed(2)} KB</p>
                       </div>
-                    </div>
-
-                    {(file || filePreview) && (
-                      <div className="flex justify-center">
-                        <Button onClick={classifyFile} disabled={loading} className="w-full max-w-xs">
-                          {loading ? "Analyzing..." : "Analyze File"}
-                        </Button>
+                    ) : (
+                      <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                        <Upload className="h-10 w-10 text-gray-400 mb-3" />
+                        <p className="mb-2 text-sm text-gray-500">
+                          <span className="font-semibold">Click to upload</span> or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-500">Any file type (MAX. 10MB)</p>
                       </div>
                     )}
+                    <Input ref={fileInputRef} type="file" className="hidden" onChange={handleFileChange} />
                   </div>
-                </CardContent>
-                {result && (
-                  <CardFooter className="flex flex-col space-y-4">
-                    <div className="w-full rounded-lg bg-muted p-4">
-                      <div className="mb-2 font-medium">Classification Result:</div>
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={result === "Adversarial" ? "text-red-500 font-bold" : "text-green-500 font-bold"}
-                        >
-                          {result}
-                        </span>
-                        <span className="text-sm text-muted-foreground">Confidence: {confidence}%</span>
-                      </div>
-                    </div>
-                    <div className="text-sm text-muted-foreground">
-                      {result === "Adversarial"
-                        ? "This file appears to contain adversarial perturbations that might fool a machine learning model."
-                        : "This file appears to be clean without detectable adversarial modifications."}
-                    </div>
-                  </CardFooter>
-                )}
-              </Card>
-            </TabsContent>
+                </div>
 
-            <TabsContent value="generate" className="mt-4">
-              <Card className="backdrop-blur-sm bg-background/60 shadow-md">
-                <CardHeader>
-                  <CardTitle>Generate Input</CardTitle>
-                  <CardDescription>Generate sample inputs to test against adversarial detection</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-6">
-                    <div className="grid gap-4">
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <Label htmlFor="input-type">Input Type</Label>
-                          <select
-                            id="input-type"
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            <option value="image">Image</option>
-                            <option value="text">Text</option>
-                            <option value="audio">Audio</option>
-                          </select>
-                        </div>
-                        <div>
-                          <Label htmlFor="model-type">Target Model</Label>
-                          <select
-                            id="model-type"
-                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                          >
-                            <option value="classification">Classification</option>
-                            <option value="detection">Object Detection</option>
-                            <option value="segmentation">Segmentation</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div>
-                        <Label htmlFor="attack-type">Attack Type</Label>
-                        <select
-                          id="attack-type"
-                          className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                        >
-                          <option value="fgsm">Fast Gradient Sign Method (FGSM)</option>
-                          <option value="pgd">Projected Gradient Descent (PGD)</option>
-                          <option value="carlini">Carlini-Wagner</option>
-                          <option value="none">Clean (No Attack)</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div className="flex justify-center">
-                      {filePreview && (
-                        <div className="relative h-48 w-full max-w-xs mb-4">
-                          <Image
-                            src={filePreview || "/placeholder.svg"}
-                            alt="Generated input"
-                            fill
-                            className="object-contain"
-                          />
-                        </div>
-                      )}
-                    </div>
-
-                    <div className="flex justify-center">
-                      <Button onClick={generateInput} disabled={loading} className="w-full max-w-xs">
-                        {loading ? "Generating..." : "Generate Input"}
-                      </Button>
-                    </div>
-
-                    {filePreview && !loading && (
-                      <div className="flex justify-center">
-                        <Button onClick={classifyFile} disabled={loading} variant="outline" className="w-full max-w-xs">
-                          Analyze Generated Input
-                        </Button>
-                      </div>
-                    )}
+                {(file || filePreview) && (
+                  <div className="flex justify-center">
+                    <Button onClick={classifyFile} disabled={loading} className="w-full max-w-xs">
+                      {loading ? "Analyzing..." : "Analyze File"}
+                    </Button>
                   </div>
-                </CardContent>
-                {result && (
-                  <CardFooter className="flex flex-col space-y-4">
-                    <div className="w-full rounded-lg bg-muted p-4">
-                      <div className="mb-2 font-medium">Classification Result:</div>
-                      <div className="flex items-center justify-between">
-                        <span
-                          className={result === "Adversarial" ? "text-red-500 font-bold" : "text-green-500 font-bold"}
-                        >
-                          {result}
-                        </span>
-                        <span className="text-sm text-muted-foreground">Confidence: {confidence}%</span>
-                      </div>
-                    </div>
-                  </CardFooter>
                 )}
-              </Card>
-            </TabsContent>
-          </Tabs>
+              </div>
+            </CardContent>
+            {result && (
+              <CardFooter className="flex flex-col space-y-4">
+                <div className="w-full rounded-lg bg-muted p-4">
+                  <div className="mb-2 font-medium">Classification Result:</div>
+                  <div className="flex items-center justify-between">
+                    <span className={result === "Adversarial" ? "text-red-500 font-bold" : "text-green-500 font-bold"}>
+                      {result}
+                    </span>
+                    <span className="text-sm text-muted-foreground">Confidence: {confidence}%</span>
+                  </div>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  {result === "Adversarial"
+                    ? "This file appears to contain adversarial perturbations that might fool a machine learning model."
+                    : "This file appears to be clean without detectable adversarial modifications."}
+                </div>
+              </CardFooter>
+            )}
+          </Card>
         </div>
       </div>
     </div>
   )
 }
-

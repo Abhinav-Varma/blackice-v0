@@ -6,13 +6,10 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
-import { ArrowLeft, Info } from "lucide-react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ArrowLeft } from "lucide-react"
 
 export default function VisualizePage() {
   const [perturbationLevel, setPerturbationLevel] = useState(0)
-  const [attackType, setAttackType] = useState("fgsm")
 
   // In a real application, these would be generated dynamically based on the perturbation level
   const getImageUrl = () => {
@@ -64,129 +61,77 @@ export default function VisualizePage() {
             </p>
           </div>
 
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertTitle>Educational Visualization</AlertTitle>
-            <AlertDescription>
-              This demo illustrates how small, carefully crafted perturbations can cause machine learning models to make
-              incorrect predictions.
-            </AlertDescription>
-          </Alert>
-
-          <Tabs defaultValue="fgsm" onValueChange={setAttackType}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="fgsm">FGSM Attack</TabsTrigger>
-              <TabsTrigger value="pgd">PGD Attack</TabsTrigger>
-              <TabsTrigger value="carlini">Carlini-Wagner</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="fgsm" className="mt-4">
-              <Card className="backdrop-blur-sm bg-background/60 shadow-md">
-                <CardHeader>
-                  <CardTitle>Fast Gradient Sign Method (FGSM)</CardTitle>
-                  <CardDescription>
-                    A one-step attack that perturbs an image in the direction that maximizes the loss function
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div className="space-y-4">
-                      <div className="text-center font-medium">Original + Perturbation</div>
-                      <div className="relative h-[300px] w-full">
-                        <Image
-                          src={getImageUrl() || "/placeholder.svg"}
-                          alt="Perturbed image"
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      <div className="text-center text-sm">
-                        Model prediction: <span className="font-medium">{getPredictionText()}</span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-4">
-                      <div className="text-center font-medium">Perturbation Only (Magnified)</div>
-                      <div className="relative h-[300px] w-full">
-                        <Image
-                          src={getNoiseImageUrl() || "/placeholder.svg"}
-                          alt="Noise pattern"
-                          fill
-                          className="object-contain"
-                        />
-                      </div>
-                      <div className="text-center text-sm text-muted-foreground">
-                        This shows the noise pattern added to the original image
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="mt-8 space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span>Perturbation Strength</span>
-                      <span>{(perturbationLevel * 10).toFixed(1)}</span>
-                    </div>
-                    <Slider
-                      value={[perturbationLevel]}
-                      min={0}
-                      max={1}
-                      step={0.01}
-                      onValueChange={(value) => setPerturbationLevel(value[0])}
+          <Card className="backdrop-blur-sm bg-background/60 shadow-md">
+            <CardHeader>
+              <CardTitle>Fast Gradient Sign Method (FGSM)</CardTitle>
+              <CardDescription>
+                A one-step attack that perturbs an image in the direction that maximizes the loss function
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-4">
+                  <div className="text-center font-medium">Original + Perturbation</div>
+                  <div className="relative h-[300px] w-full">
+                    <Image
+                      src={getImageUrl() || "/placeholder.svg"}
+                      alt="Perturbed image"
+                      fill
+                      className="object-contain"
                     />
-                    <p className="text-sm text-muted-foreground">
-                      Drag the slider to adjust the strength of the adversarial perturbation and observe how it affects
-                      the model's prediction.
-                    </p>
                   </div>
-                </CardContent>
-                <CardFooter className="flex flex-col space-y-4 text-sm">
-                  <p>
-                    The Fast Gradient Sign Method (FGSM) creates adversarial examples by adding perturbations in the
-                    direction of the gradient of the loss function with respect to the input.
-                  </p>
-                  <p>
-                    Even with perturbations that are imperceptible to humans, the model's prediction can change
-                    dramatically.
-                  </p>
-                </CardFooter>
-              </Card>
-            </TabsContent>
+                  <div className="text-center text-sm">
+                    Model prediction: <span className="font-medium">{getPredictionText()}</span>
+                  </div>
+                </div>
 
-            <TabsContent value="pgd" className="mt-4">
-              <Card className="backdrop-blur-sm bg-background/60 shadow-md">
-                <CardHeader>
-                  <CardTitle>Projected Gradient Descent (PGD)</CardTitle>
-                  <CardDescription>
-                    An iterative attack that applies FGSM multiple times with small step sizes
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center p-12 text-muted-foreground">
-                    Select this attack type to see a demonstration of the PGD attack method
+                <div className="space-y-4">
+                  <div className="text-center font-medium">Perturbation Only (Magnified)</div>
+                  <div className="relative h-[300px] w-full">
+                    <Image
+                      src={getNoiseImageUrl() || "/placeholder.svg"}
+                      alt="Noise pattern"
+                      fill
+                      className="object-contain"
+                    />
                   </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
+                  <div className="text-center text-sm text-muted-foreground">
+                    This shows the noise pattern added to the original image
+                  </div>
+                </div>
+              </div>
 
-            <TabsContent value="carlini" className="mt-4">
-              <Card className="backdrop-blur-sm bg-background/60 shadow-md">
-                <CardHeader>
-                  <CardTitle>Carlini-Wagner Attack</CardTitle>
-                  <CardDescription>
-                    A powerful optimization-based attack that creates adversarial examples with minimal perturbation
-                  </CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-center p-12 text-muted-foreground">
-                    Select this attack type to see a demonstration of the Carlini-Wagner attack method
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-          </Tabs>
+              <div className="mt-8 space-y-4">
+                <div className="flex items-center justify-between">
+                  <span>Perturbation Strength</span>
+                  <span>{(perturbationLevel * 10).toFixed(1)}</span>
+                </div>
+                <Slider
+                  value={[perturbationLevel]}
+                  min={0}
+                  max={1}
+                  step={0.01}
+                  onValueChange={(value) => setPerturbationLevel(value[0])}
+                />
+                <p className="text-sm text-muted-foreground">
+                  Drag the slider to adjust the strength of the adversarial perturbation and observe how it affects the
+                  model's prediction.
+                </p>
+              </div>
+            </CardContent>
+            <CardFooter className="flex flex-col space-y-4 text-sm">
+              <p>
+                The Fast Gradient Sign Method (FGSM) creates adversarial examples by adding perturbations in the
+                direction of the gradient of the loss function with respect to the input.
+              </p>
+              <p>
+                Even with perturbations that are imperceptible to humans, the model's prediction can change
+                dramatically.
+              </p>
+            </CardFooter>
+          </Card>
         </div>
       </div>
     </div>
   )
 }
-
