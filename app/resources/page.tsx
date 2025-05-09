@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, ExternalLink, Download } from "lucide-react"
@@ -43,13 +45,13 @@ export default function ResourcesPage() {
                     A thorough analysis of adversarial attack methods, their effects on AI in various applications, and
                     the state of defense tactics.
                   </p>
-                  <a
-                    href="/paper.pdf"
-                    download="Adversarial_Attacks_Survey.pdf"
-                    className="mt-1 inline-flex items-center gap-1 text-xs text-primary hover:underline"
+                  <Button
+                    variant="link"
+                    className="mt-1 p-0 h-auto text-xs text-primary hover:underline flex items-center gap-1"
+                    onClick={() => alert("Paper download functionality will be implemented with your actual PDF file.")}
                   >
                     Download Paper <Download className="h-3 w-3" />
-                  </a>
+                  </Button>
                 </div>
               </CardContent>
             </Card>
