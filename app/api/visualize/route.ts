@@ -2,21 +2,20 @@ import { type NextRequest, NextResponse } from "next/server"
 
 export async function POST(request: NextRequest) {
   try {
-    const apiEndpoint = process.env.NEXT_PUBLIC_ADVERSARIAL_API_ENDPOINT
+    const apiEndpoint = process.env.NEXT_PUBLIC_ADVERSARIAL_API_ENDPOINT || "https://145.223.23.193:9899/predict/pgd"
 
     if (!apiEndpoint) {
       return NextResponse.json({ error: "API endpoint is not defined in environment variables" }, { status: 500 })
     }
 
     const formData = await request.formData()
-    const file = formData.get("file") as File
+    const epsilon = formData.get("epsilon")
 
-    if (!file) {
-      return NextResponse.json({ error: "No file provided" }, { status: 400 })
+    if (!epsilon) {
+      return NextResponse.json({ error: "No epsilon value provided" }, { status: 400 })
     }
 
-    console.log(`Sending file to API: ${apiEndpoint}`)
-    console.log(`File name: ${file.name}, size: ${file.size} bytes`)
+    console.log(`Sending request to API: ${apiEndpoint} with epsilon: ${epsilon}`)
 
     // Since the API requires HTTPS, we'll simulate a response for now
     // In a production environment, you would need to ensure the API supports HTTPS
@@ -25,23 +24,29 @@ export async function POST(request: NextRequest) {
     console.log("API requires HTTPS. Using simulated response for demonstration.")
 
     // Simulate API processing time
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    await new Promise((resolve) => setTimeout(resolve, 1000))
 
-    // Generate a simulated response based on the file
-    const isExecutable =
-      file.name.endsWith(".exe") ||
-      file.name.endsWith(".dll") ||
-      file.name.endsWith(".sys") ||
-      file.name.endsWith(".scr")
+    // Generate a simulated response based on the epsilon value
+    const epsilonValue = Number.parseFloat(epsilon.toString())
+    const noiseLevel = Math.min(epsilonValue * 10, 100)
 
-    // Randomly determine if the file is adversarial, with higher chance for executable files
-    const isAdversarial = Math.random() > (isExecutable ? 0.3 : 0.7)
-    const confidenceScore = Math.round(Math.random() * 30 + 70) / 100 // Between 0.7 and 1.0
+    // Simulate different predictions based on epsilon
+    let prediction
+    if (epsilonValue < 0.3) {
+      prediction = `Cat (${Math.round(98 - epsilonValue * 100)}% confidence)`
+    } else if (epsilonValue < 0.6) {
+      prediction = `Cat (${Math.round(75 - (epsilonValue - 0.3) * 100)}% confidence)`
+    } else if (epsilonValue < 0.8) {
+      prediction = `Cat (${Math.round(45 - (epsilonValue - 0.6) * 100)}% confidence)`
+    } else {
+      prediction = `Dog (${Math.round(50 + (epsilonValue - 0.8) * 100)}% confidence)`
+    }
 
     const simulatedResponse = {
-      classification: isAdversarial ? "Adversarial" : "Clean",
-      score: confidenceScore,
-      file_name: file.name,
+      perturbed_image: `/placeholder.svg?height=300&width=300&text=Perturbed+Image:${noiseLevel.toFixed(0)}%`,
+      noise_pattern: `/placeholder.svg?height=300&width=300&text=Noise:${noiseLevel.toFixed(0)}%`,
+      prediction: prediction,
+      epsilon: epsilonValue,
       analysis_time: new Date().toISOString(),
     }
 
@@ -90,7 +95,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(data)
     */
   } catch (error: any) {
-    console.error("Error in classify API route:", error)
+    console.error("Error in visualize API route:", error)
     return NextResponse.json({ error: error?.message || "An unknown error occurred" }, { status: 500 })
   }
 }
