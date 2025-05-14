@@ -1,88 +1,42 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
-import { ArrowLeft, Info } from "lucide-react"
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
+import { ArrowLeft } from "lucide-react"
 
 export default function VisualizePage() {
   const [perturbationLevel, setPerturbationLevel] = useState(0)
-  const [originalImage, setOriginalImage] = useState("/placeholder.svg?height=300&width=300&text=Original+Image")
-  const [perturbedImage, setPerturbedImage] = useState("/placeholder.svg?height=300&width=300&text=Perturbed+Image")
-  const [noiseImage, setNoiseImage] = useState("/placeholder.svg?height=300&width=300&text=Noise+Pattern")
-  const [prediction, setPrediction] = useState("Cat (98% confidence)")
-  const [isLoading, setIsLoading] = useState(false)
 
-  // API endpoint for PGD attack (commented out for now)
-  const apiEndpoint = process.env.NEXT_PUBLIC_ADVERSARIAL_API_ENDPOINT || "https://145.223.23.193:9899/predict/pgd"
-
-  // Update images and prediction when perturbation level changes
-  useEffect(() => {
-    const updateVisualization = async () => {
-      if (perturbationLevel === 0) {
-        setPerturbedImage("/placeholder.svg?height=300&width=300&text=Original+Image")
-        setNoiseImage("/placeholder.svg?height=300&width=300&text=No+Noise")
-        setPrediction("Cat (98% confidence)")
-        return
-      }
-
-      setIsLoading(true)
-
-      try {
-        // Simulate API call delay
-        await new Promise((resolve) => setTimeout(resolve, 500))
-
-        // In a real implementation, we would call the API here
-        /*
-        const formData = new FormData()
-        formData.append("epsilon", perturbationLevel.toString())
-        
-        const response = await fetch("/api/visualize", {
-          method: "POST",
-          body: formData
-        })
-        
-        if (!response.ok) {
-          throw new Error(`API error: ${response.status}`)
-        }
-        
-        const data = await response.json()
-        setPerturbedImage(data.perturbed_image)
-        setNoiseImage(data.noise_pattern)
-        setPrediction(data.prediction)
-        */
-
-        // Simulation logic
-        const noiseLevel = Math.min(perturbationLevel * 10, 100)
-
-        // Simulate different predictions based on perturbation level
-        let simulatedPrediction
-        if (perturbationLevel < 0.3) {
-          simulatedPrediction = `Cat (${Math.round(98 - perturbationLevel * 100)}% confidence)`
-        } else if (perturbationLevel < 0.6) {
-          simulatedPrediction = `Cat (${Math.round(75 - (perturbationLevel - 0.3) * 100)}% confidence)`
-        } else if (perturbationLevel < 0.8) {
-          simulatedPrediction = `Cat (${Math.round(45 - (perturbationLevel - 0.6) * 100)}% confidence)`
-        } else {
-          simulatedPrediction = `Dog (${Math.round(50 + (perturbationLevel - 0.8) * 100)}% confidence)`
-        }
-
-        setPerturbedImage(`/placeholder.svg?height=300&width=300&text=Perturbed+Image:${noiseLevel.toFixed(0)}%`)
-        setNoiseImage(`/placeholder.svg?height=300&width=300&text=Noise:${noiseLevel.toFixed(0)}%`)
-        setPrediction(simulatedPrediction)
-      } catch (error) {
-        console.error("Error updating visualization:", error)
-      } finally {
-        setIsLoading(false)
-      }
+  // In a real application, these would be generated dynamically based on the perturbation level
+  const getImageUrl = () => {
+    if (perturbationLevel === 0) {
+      return "/placeholder.svg?height=300&width=300"
+    } else {
+      const noiseLevel = Math.min(perturbationLevel * 10, 100)
+      return `/placeholder.svg?height=300&width=300&text=Perturbation:${noiseLevel.toFixed(0)}%`
     }
+  }
 
-    updateVisualization()
-  }, [perturbationLevel])
+  const getPredictionText = () => {
+    if (perturbationLevel < 0.3) {
+      return "Cat (98% confidence)"
+    } else if (perturbationLevel < 0.6) {
+      return "Cat (75% confidence)"
+    } else if (perturbationLevel < 0.8) {
+      return "Cat (45% confidence)"
+    } else {
+      return "Dog (67% confidence)"
+    }
+  }
+
+  const getNoiseImageUrl = () => {
+    const noiseLevel = Math.min(perturbationLevel * 10, 100)
+    return `/placeholder.svg?height=300&width=300&text=Noise:${noiseLevel.toFixed(0)}%`
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-background/80 relative">
@@ -107,15 +61,6 @@ export default function VisualizePage() {
             </p>
           </div>
 
-          <Alert>
-            <Info className="h-4 w-4" />
-            <AlertTitle>Simulation Mode</AlertTitle>
-            <AlertDescription>
-              The attack visualization is currently running in simulation mode. In a production environment, this would
-              connect to a secure API endpoint.
-            </AlertDescription>
-          </Alert>
-
           <Card className="backdrop-blur-sm bg-background/60 shadow-md">
             <CardHeader>
               <CardTitle>Fast Gradient Sign Method (FGSM)</CardTitle>
@@ -128,45 +73,27 @@ export default function VisualizePage() {
                 <div className="space-y-4">
                   <div className="text-center font-medium">Original + Perturbation</div>
                   <div className="relative h-[300px] w-full">
-                    <div
-                      className={`absolute inset-0 flex items-center justify-center ${isLoading ? "opacity-50" : ""}`}
-                    >
-                      <Image
-                        src={perturbedImage || "/placeholder.svg"}
-                        alt="Perturbed image"
-                        fill
-                        className="object-contain"
-                      />
-                      {isLoading && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-                          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                        </div>
-                      )}
-                    </div>
+                    <Image
+                      src={getImageUrl() || "/placeholder.svg"}
+                      alt="Perturbed image"
+                      fill
+                      className="object-contain"
+                    />
                   </div>
                   <div className="text-center text-sm">
-                    Model prediction: <span className="font-medium">{prediction}</span>
+                    Model prediction: <span className="font-medium">{getPredictionText()}</span>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   <div className="text-center font-medium">Perturbation Only (Magnified)</div>
                   <div className="relative h-[300px] w-full">
-                    <div
-                      className={`absolute inset-0 flex items-center justify-center ${isLoading ? "opacity-50" : ""}`}
-                    >
-                      <Image
-                        src={noiseImage || "/placeholder.svg"}
-                        alt="Noise pattern"
-                        fill
-                        className="object-contain"
-                      />
-                      {isLoading && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-background/50 backdrop-blur-sm">
-                          <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
-                        </div>
-                      )}
-                    </div>
+                    <Image
+                      src={getNoiseImageUrl() || "/placeholder.svg"}
+                      alt="Noise pattern"
+                      fill
+                      className="object-contain"
+                    />
                   </div>
                   <div className="text-center text-sm text-muted-foreground">
                     This shows the noise pattern added to the original image
@@ -176,8 +103,8 @@ export default function VisualizePage() {
 
               <div className="mt-8 space-y-4">
                 <div className="flex items-center justify-between">
-                  <span>Perturbation Strength (ε)</span>
-                  <span>{(perturbationLevel * 0.3).toFixed(2)}</span>
+                  <span>Perturbation Strength</span>
+                  <span>{(perturbationLevel * 10).toFixed(1)}</span>
                 </div>
                 <Slider
                   value={[perturbationLevel]}
@@ -185,7 +112,6 @@ export default function VisualizePage() {
                   max={1}
                   step={0.01}
                   onValueChange={(value) => setPerturbationLevel(value[0])}
-                  disabled={isLoading}
                 />
                 <p className="text-sm text-muted-foreground">
                   Drag the slider to adjust the strength of the adversarial perturbation and observe how it affects the

@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
     // Since the API requires HTTPS, we'll simulate a response for now
     // In a production environment, you would need to ensure the API supports HTTPS
     // or set up a secure proxy server
-
+    /*
     console.log("API requires HTTPS. Using simulated response for demonstration.")
 
     // Simulate API processing time
@@ -48,8 +48,8 @@ export async function POST(request: NextRequest) {
     console.log("Simulated response:", simulatedResponse)
 
     return NextResponse.json(simulatedResponse)
-
-    /* 
+  */
+     
     // Original API call code - uncomment when API supports HTTPS or a proxy is set up
     const response = await fetch(apiEndpoint, {
       method: "POST",
@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
     console.log("API Response:", data)
 
     return NextResponse.json(data)
-    */
+    
   } catch (error: any) {
     console.error("Error in classify API route:", error)
     return NextResponse.json({ error: error?.message || "An unknown error occurred" }, { status: 500 })
